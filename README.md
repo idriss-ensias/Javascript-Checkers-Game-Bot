@@ -9,3 +9,4 @@ If you go over the code, you will find a variable called 'gameMode', this game h
 #### Single : game in your browser where you can play with your friend on your machine, you can move the pieces of both players.
 #### Auto : you play with the bot
 #### Multi : this is for another project i am currently working on, but if you provide the main html page with a websocket, the checkers game can be played over the internet.
+# if you find that the quality of the code or the logic of the program is not good, please note that this is my own implementation and that i did not copy from other sources so feel free to share with me at my email address provided above what you think !
