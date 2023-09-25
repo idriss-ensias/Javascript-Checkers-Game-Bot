@@ -39,7 +39,7 @@ function checkersTree(checkersAutoPlayer){
         childrenList = 0;
         for (let ce=0; ce<this.treeNodeList.length; ce++){
             if(noNode.isParent(this.treeNodeList[ce])){
-                childrenList += this.treeNodeList[ce].weight;
+                childrenList += this.treeNodeList[ce].weight/this.treeNodeList[ce].level+this.treeNodeList[ce].kingWeight/this.treeNodeList[ce].level;
             }
         }
         return childrenList;
@@ -85,7 +85,6 @@ function checkersTree(checkersAutoPlayer){
         nodeDev.doNodeMovs();
     }
     this.addLevel = function(xLevel){
-        console.log("adding level "+xLevel.toString());
         this.checkersAutoPlayer.initAutoBoard();
         xLevelNodes = this.getLevelNodes(xLevel-1);
         xLevelMoves = [];
@@ -103,6 +102,5 @@ function checkersTree(checkersAutoPlayer){
             }
         }
         this.treeDepth = xLevel;
-        console.log("done "+this.treeDepth.toString());
     }
 }
