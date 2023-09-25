@@ -12,6 +12,9 @@ function checkersNode(nodePawn,movePos,nodeParent,level,nodeTree,nodePlayer){
     this.oppositePlayerPawns = 0;
     this.pawnMovesNextLevel = [];
     this.moveBuffer = [];
+    this.kingWeight = -1000;
+    this.kingMainNum = -1;
+    this.kingOppositeNum = -1;
     if (this.level > 0){
         for (let bh=0; bh<this.nodeParent.length;bh++){
             if(this.nodeParent[bh].nodePawn != "-1:-1"){
@@ -42,11 +45,9 @@ function checkersNode(nodePawn,movePos,nodeParent,level,nodeTree,nodePlayer){
         return false;
     }
     this.adjustParent = function(){
-        console.log("adjusting parents "+this.nodeParent.length);
         newParentList = [];
         for (let cm=0; cm<this.nodeParent.length; cm++){
             if (this.nodeParent[cm].level > 0){
-                console.log("niyaw kagar");
                 newParentList.push(this.nodeParent[cm]);
             }
         }
@@ -67,6 +68,9 @@ function checkersNode(nodePawn,movePos,nodeParent,level,nodeTree,nodePlayer){
         }
     }
     this.calculateWeight = function(){
+        calculmainPlayerPawns = parseInt(this.nodeTree.checkersAutoPlayer.autoBoard.getPlayerByName(this.nodeTree.checkersAutoPlayer.autoPlayer).getPlayerPawns().length);
+        calculoppositePlayerPawns = parseInt(this.nodeTree.checkersAutoPlayer.autoBoard.getPlayerByName(this.nodeTree.checkersAutoPlayer.oppositePlayer).getPlayerPawns().length);
+        calculWeight = parseInt(calculmainPlayerPawns-calculoppositePlayerPawns);
         this.nodeTree.checkersAutoPlayer.initAutoBoard();
         for (let be=0; be<this.nodeParent.length; be++){
             if (this.nodeParent[be].nodePawn != "-1:-1"){
@@ -83,6 +87,19 @@ function checkersNode(nodePawn,movePos,nodeParent,level,nodeTree,nodePlayer){
         this.mainPlayerPawns = this.nodeTree.checkersAutoPlayer.autoBoard.getPlayerByName(this.nodeTree.checkersAutoPlayer.autoPlayer).getPlayerPawns().length;
         this.oppositePlayerPawns = this.nodeTree.checkersAutoPlayer.autoBoard.getPlayerByName(this.nodeTree.checkersAutoPlayer.oppositePlayer).getPlayerPawns().length;
         this.weight = this.mainPlayerPawns-this.oppositePlayerPawns;
+        if(this.level%2==1){
+            if(this.weight>calculWeight){
+                this.weight = this.weight*2;
+            }
+        }
+        if (this.oppositePlayerPawns == 0){
+            this.weight = this.weight+(this.weight*1000)/this.level;
+        } else if (this.mainPlayerPawns == 0){
+            this.weight = this.weight-(this.weight*1000)/this.level;
+        }
+        this.kingMainNum = this.nodeTree.checkersAutoPlayer.autoBoard.getPlayerByName(this.nodeTree.checkersAutoPlayer.autoPlayer).getPlayerKingsNum();
+        this.kingOppositeNum = this.nodeTree.checkersAutoPlayer.autoBoard.getPlayerByName(this.nodeTree.checkersAutoPlayer.oppositePlayer).getPlayerKingsNum();
+        this.kingWeight = this.kingMainNum-this.kingOppositeNum;
     }
     if(this.nodePawn != "-1:-1"){
         this.calculateWeight();
