@@ -6,6 +6,8 @@ function player(playerName, playerDirection, playerBoard, playerRole){
     this.playerRole = playerRole;
     this.playerKeepAlive = 50;
     this.playerStillCanEat = [];
+    this.timed = 0;
+    this.playerClock = 0;
     this.getPlayerPawns = function() {
         playerPawns = [];
         for (let i=0; i<this.playerBoard.boardPawns.length; i++){
@@ -28,5 +30,15 @@ function player(playerName, playerDirection, playerBoard, playerRole){
             pawnCanEat = this.playerStillCanEat;
         }
         return pawnCanEat;
+    }
+    this.getPlayerKingsNum = function(){
+        playerPawns = this.getPlayerPawns();
+        kingNum = 0;
+        for (let cr=0; cr<playerPawns.length; cr++){
+            if (playerPawns[cr].pawnKing == 1){
+                kingNum++;
+            }
+        }
+        return kingNum;
     }
 }
