@@ -16,7 +16,11 @@ function pawn(pawnID, pawnLogicalX, pawnLogicalY, gameBoard, player, pawnSquare)
         this.pawnColor = this.gameBoard.boardPawnColorPlayerTwo;
     }
     this.getXYPawnPosition = function(){
-        return [this.gameBoard.boardX+(Math.floor(this.gameBoard.boardProportion/8))*this.pawnLogicalX+Math.floor(this.gameBoard.boardProportion/16),this.gameBoard.boardY+(Math.floor(this.gameBoard.boardProportion/8))*this.pawnLogicalY+Math.floor(this.gameBoard.boardProportion/16)];
+        if (this.gameBoard.translate == 0){
+            return [this.gameBoard.boardX+(Math.floor(this.gameBoard.boardProportion/8))*this.pawnLogicalX+Math.floor(this.gameBoard.boardProportion/16),this.gameBoard.boardY+(Math.floor(this.gameBoard.boardProportion/8))*this.pawnLogicalY+Math.floor(this.gameBoard.boardProportion/16)];
+        } else {
+            return [this.gameBoard.boardX+(Math.floor(this.gameBoard.boardProportion/8))*(7-this.pawnLogicalX)+Math.floor(this.gameBoard.boardProportion/16),this.gameBoard.boardY+(Math.floor(this.gameBoard.boardProportion/8))*(7-this.pawnLogicalY)+Math.floor(this.gameBoard.boardProportion/16)];
+        }
     }
     this.pawnRealX = this.getXYPawnPosition()[0];
     this.pawnRealY = this.getXYPawnPosition()[1];
@@ -30,10 +34,24 @@ function pawn(pawnID, pawnLogicalX, pawnLogicalY, gameBoard, player, pawnSquare)
         [eatDeltaX,eatDeltaY] = [this.pawnLogicalX-pos[0],this.pawnLogicalY-pos[1]];
         pawnPossibleMoves = this.validatePossibleMoves();
         if (arrayIncludesNestedArray(pawnPossibleMoves,pos)){
+            if (this.gameBoard.hasAuto == 1){
+                if (this.gameBoard.oldMove.length !=0){
+                    this.gameBoard.getSquareByPos(this.gameBoard.oldMove[0],this.gameBoard.oldMove[1]).unChangeColor();
+                }
+                this.gameBoard.oldMove = [this.pawnLogicalX,this.pawnLogicalY];
+                this.gameBoard.getSquareByPos(this.gameBoard.oldMove[0],this.gameBoard.oldMove[1]).changeColor(this.gameBoard.boardOldMoveColor);
+            }
             this.finalValidate = [];
             this.player.playerStillCanEat = [];
             [this.pawnLogicalX,this.pawnLogicalY] = pos;
             [this.pawnRealX,this.pawnRealY] = this.getXYPawnPosition();
+            if (this.gameBoard.hasAuto == 1){
+                if (this.gameBoard.newMove.length !=0){
+                    this.gameBoard.getSquareByPos(this.gameBoard.newMove[0],this.gameBoard.newMove[1]).unChangeColor();
+                }
+                this.gameBoard.newMove = [this.pawnLogicalX,this.pawnLogicalY];
+                this.gameBoard.getSquareByPos(this.gameBoard.newMove[0],this.gameBoard.newMove[1]).changeColor(this.gameBoard.boardNewMoveColor);
+            }
             this.pawnSquare = this.gameBoard.getSquareByPos(this.pawnLogicalX,this.pawnLogicalY);
             if (pos[1]==(this.player.playerDirection+1)*(7/2)){
                 this.pawnKing = 1;
