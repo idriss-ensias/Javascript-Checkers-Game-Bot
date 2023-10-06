@@ -8,7 +8,7 @@ function checkersMultiManager(multiBoard){
     this.clickedPawn = [];
     this.indicatorColor = "orange"
     this.init = function(){
-        this.multiSocket = new WebSocket('ws://127.0.0.1:8081/ws/game/'+this.gameident+'/');
+        this.multiSocket = new WebSocket('ws://'+window.location.host+'/ws/game/'+this.gameident+'/');
         multiManager = this;
         this.multiSocket.onmessage = function(e) {
             data = JSON.parse(e.data);
