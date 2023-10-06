@@ -1,26 +1,32 @@
-function Board(gameMode,gameID,hasAuto){
+function Board(gameMode,gameID,hasAuto,translate){
     this.gameMode = gameMode;
     this.gameID = gameID;
     if (this.gameMode == "multi"){
         this.gameMulti  = new checkersMultiManager(this,gameID); 
     }
     this.hasAuto = hasAuto;
+    this.moveAudio = new Audio("checheckers.mp3");
     this.boardX = 0;
     this.boardY = 0;
     this.boardProportion = 600;
-    this.boardSquareMain = "yellow";
-    this.boardSquareSecondary = "gray";
+    this.boardSquareMain = "#f2b666";
+    this.boardSquareSecondary = "#7a4805";
     this.boardSquareBorder = "white";
-    this.boardPawnColorPlayerOne = "blue";
+    this.boardPawnColorPlayerOne = "black";
     this.boardPawnColorPlayerTwo = "red";
-    this.boardPawnColorBorder = "pink";
+    this.boardPawnColorBorder = "#f2b666";
     this.boardInfoBoardColor = "white";
     this.boardInfoBoardBorderColor = "black";
     this.boardInfoMessageColor = "red";
     this.boardStartButtonColor = "green";
     this.boardStartButtonHighligtColor = "gray";
     this.boardStartButtonTextColor = "white";
+    this.boardOldMoveColor = "#c2e0af";
+    this.boardNewMoveColor = "#538c2e";
+    this.boardClockContainerColor = "yellow";
+    this.boardClockTextColor = "red";
     this.boardSquares = [];
+    this.translate = translate;
     this.boardLogList = [];
     this.players = [new player(playerGlobalList[0][0],1,this,0),new player(playerGlobalList[1][0],-1,this,1)];
     this.boardPawns = [];
@@ -31,6 +37,9 @@ function Board(gameMode,gameID,hasAuto){
     this.gameEnd = false;
     this.winner = "";
     this.loser = "";
+    this.oldMove = [];
+    this.newMove = [];
+    this.trianglePos = getTrianglePos(this.translate);
     this.pawnListToString = function(){
         pawnList = "";
         for (let aj=0; aj<this.boardPawns.length; aj++){
@@ -226,6 +235,16 @@ function Board(gameMode,gameID,hasAuto){
     } else {
         this.boardAuto = 0;
     }
+    this.translateF = function(){
+        this.translate = (this.translate+1)%2;
+        for (let cm=0; cm<this.boardSquares.length; cm++){
+            this.boardSquares[cm].setSquarePos();
+        }
+        for (let cn=0; cn<this.boardPawns.length; cn++){
+            this.boardPawns[cn].pawnRealX = this.boardPawns[cn].getXYPawnPosition()[0];
+            this.boardPawns[cn].pawnRealY = this.boardPawns[cn].getXYPawnPosition()[1];
+        }
+    }
     this.update = function(){
         if (!this.gameEnd){
             this.checkGameStatus();
@@ -244,5 +263,31 @@ function Board(gameMode,gameID,hasAuto){
         if (this.infoBoardMessage.messageShow == 1){
             this.infoBoardMessage.update();
         }
+        ctx.fillStyle = "gray";
+        ctx.beginPath();
+        ctx.arc(this.boardProportion/16,this.boardProportion/16,10,0,2*Math.PI);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = this.players[this.turn].getPlayerPawns()[0].pawnColor;
+        ctx.beginPath();
+        ctx.arc(this.boardProportion/16,this.boardProportion/16,6,0,2*Math.PI);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = "gray";
+        ctx.beginPath();
+        ctx.moveTo(this.trianglePos[0][0]*this.boardProportion,this.trianglePos[0][1]*this.boardProportion);
+        ctx.lineTo(this.trianglePos[1][0]*this.boardProportion,this.trianglePos[1][1]*this.boardProportion);
+        ctx.lineTo(this.trianglePos[2][0]*this.boardProportion,this.trianglePos[2][1]*this.boardProportion);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = this.boardClockContainerColor;
+        ctx.beginPath();
+        ctx.fillRect((29/32)*this.boardProportion,(13/32)*this.boardProportion,(3/32)*this.boardProportion,(1/16)*this.boardProportion);
+        ctx.fill();
+        ctx.closePath();
+        ctx.fillStyle = this.boardClockTextColor;
+        ctx.font = "20px arial";
+        ctx.fillText(getTimeString(getMin(incTime)),(29/32)*this.boardProportion+5,(13/32)*this.boardProportion+25);
+        ctx.fill();
     }
 }
