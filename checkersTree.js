@@ -1,6 +1,7 @@
 function checkersTree(checkersAutoPlayer){
     this.checkersAutoPlayer = checkersAutoPlayer;
     this.treeNodeList = [];
+    this.turnNum = 0;
     this.treeDepth = 0;
     this.dummyNode = new checkersNode("-1:-1","-1,-1",null,0,this,null);
     this.oldTreeNodeList = [];
@@ -39,7 +40,9 @@ function checkersTree(checkersAutoPlayer){
         childrenList = 0;
         for (let ce=0; ce<this.treeNodeList.length; ce++){
             if(noNode.isParent(this.treeNodeList[ce])){
-                childrenList += this.treeNodeList[ce].weight/this.treeNodeList[ce].level+this.treeNodeList[ce].kingWeight/this.treeNodeList[ce].level;
+                if (this.treeNodeList[ce].level == this.treeDepth ){
+                    childrenList += this.treeNodeList[ce].weight;
+                }
             }
         }
         return childrenList;
@@ -49,6 +52,7 @@ function checkersTree(checkersAutoPlayer){
         buffer = this.getChildren(this.treeNodeList[bestMove]);
         firstMoves = this.getLevelNodes(1);
         for (let cf=0; cf<firstMoves.length; cf++){
+            console.log(this.getChildren(firstMoves[cf]));
             if(this.getChildren(firstMoves[cf])>buffer){
                 bestMove = cf;
                 buffer = this.getChildren(this.treeNodeList[bestMove]);
@@ -59,6 +63,7 @@ function checkersTree(checkersAutoPlayer){
     this.finalResult = function(fLevel){
         this.getMovesToLevel(fLevel);
         this.chosenMove = this.treeNodeList[this.getBestMove()];
+        this.turnNum++;
         return this.chosenMove;
     }
     this.addFirstLevel = function(){
