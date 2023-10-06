@@ -4,12 +4,30 @@ function boardSquare(boardSquareLogicalX,boardSquareLogicalY,gameBoard){
     this.gameBoard = gameBoard;
     this.boardSquareHighlight = 0;
     this.squareProportion = Math.floor(this.gameBoard.boardProportion/8);
-    this.boardSquareRealX = this.gameBoard.boardX + this.squareProportion*this.boardSquareLogicalX;
-    this.boardSquareRealY = this.gameBoard.boardY + this.squareProportion*this.boardSquareLogicalY;
+    this.setSquarePos = function(){
+        if (this.gameBoard.translate == 0){
+            this.boardSquareRealX = this.gameBoard.boardX + this.squareProportion*this.boardSquareLogicalX;
+            this.boardSquareRealY = this.gameBoard.boardY + this.squareProportion*this.boardSquareLogicalY;
+        } else {
+            this.boardSquareRealX = this.gameBoard.boardX + this.squareProportion*(7-this.boardSquareLogicalX);
+            this.boardSquareRealY = this.gameBoard.boardY + this.squareProportion*(7-this.boardSquareLogicalY);
+        }
+    }
+    this.setSquarePos();
     if (this.boardSquareLogicalX%2 === this.boardSquareLogicalY%2){
         this.color = this.gameBoard.boardSquareMain;
     } else {
         this.color = this.gameBoard.boardSquareSecondary;
+    }
+    this.changeColor = function(newColor){
+        this.color = newColor;
+    }
+    this.unChangeColor = function(){
+        if (this.boardSquareLogicalX%2 === this.boardSquareLogicalY%2){
+            this.color = this.gameBoard.boardSquareMain;
+        } else {
+            this.color = this.gameBoard.boardSquareSecondary;
+        }   
     }
     this.update = function(){
         ctx = checkersGameArea.context;
