@@ -1,4 +1,4 @@
-var checkersboard = new Board(gameMode,gameID,1);
+var checkersboard = new Board(gameMode,gameID,1,0);
 var clickedpawn = checkersboard.dummyPawn;
 var click = 0;
 var startclick = 0;
@@ -20,7 +20,7 @@ var checkersGameArea = {
         window.addEventListener("mousedown", function (e) {
             if (checkersboard.gameStart){
                 if ((playerGlobalList[checkersboard.turn][0] == miniMe)||(gameMode=="single")){
-                    if(checkersboard.checkClickInsidePawns(e.pageX,e.pageY,checkersboard.boardPawns!=false)){
+                    if(checkersboard.checkClickInsidePawns(e.pageX,e.pageY,checkersboard.boardPawns)!=false){
                         clickedpawn = checkersboard.getPawn(checkersboard.checkClickInsidePawns(e.pageX,e.pageY,checkersboard.boardPawns));
                         if (clickedpawn.player == checkersboard.players[checkersboard.turn]){
                             checkersboard.boardPawns = reOrderArray(checkersboard.boardPawns,clickedpawn);
@@ -43,6 +43,7 @@ var checkersGameArea = {
                         checkersboard.infoBoardMessage.startButtonColor = checkersboard.boardStartButtonHighligtColor;
                         checkersboard.infoBoardMessage.update();
                         startclick = 1;
+                        window.setInterval(incrementTime,1000);
                     } else {
                         checkersboard.gameMulti.gameStateOneSend();
                         playerGlobalList[getPlayerIndex(miniMe,playerGlobalList)][1] = 2;
@@ -65,6 +66,9 @@ var checkersGameArea = {
             if (checkersboard.gameStart){
                 if (click == 1){
                     if(clickedpawn != checkersboard.dummyPawn){
+                        checkersboard.moveAudio.pause();
+                        checkersboard.moveAudio.currentTime = 0;
+                        checkersboard.moveAudio.play();
                         clickedpawn.move(checkersboard.getSquare([e.pageX,e.pageY]));
                         checkersboard.unHighlightAllSquares();
                     }
@@ -75,6 +79,12 @@ var checkersGameArea = {
                     click = 0;
                     if (gameMode == 'multi'){
                         checkersboard.gameMulti.gameStateTwoSendUnclip();
+                    }
+                } else {
+                    if (isInsideSquare(e.pageX,e.pageY,(11/12)*checkersboard.boardProportion,(11/12)*checkersboard.boardProportion,(1/24)*checkersboard.boardProportion)){
+                        checkersboard.translateF();
+                        checkersboard.trianglePos = getTrianglePos(checkersboard.translate);
+                        checkersboard.update();
                     }
                 }
             } else {
@@ -100,15 +110,18 @@ function updateCheckersGameArea(){
     if (gameMode == "multi"){
         checkersboard.gameMulti.update();
     }
-    if (checkersboard.gameEnd != 1){
+    if ((checkersboard.gameEnd != 1)&&(checkersboard.gameStart == 1)){
         if (gameMode == "auto"){
             if (checkersboard.players[checkersboard.turn].playerName != miniMe){
                 resuAuto = checkersboard.boardAuto.checkersTree.finalResult(5);
                 for (let cp=0; cp<resuAuto.movePos.length; cp++){
+                    checkersboard.moveAudio.pause();
+                    checkersboard.moveAudio.currentTime = 0;
+                    checkersboard.moveAudio.play();
                     checkersboard.getPawnByID(resuAuto.nodePawn).move(resuAuto.movePos[cp]);
+                    checkersGameArea.clear();
+                    checkersboard.update();
                 }
-                checkersGameArea.clear();
-                checkersboard.update();
             }
         }
     }
