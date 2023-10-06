@@ -32,8 +32,12 @@ function arrayIncludesNestedArray(array,nestedArray){
 }
 function isInsideSquare(x,y,squareX,squareY,squareProportion){
     if ((x-squareX)<squareProportion){
-        if ((y-squareY)<squareProportion){
-            return true;
+        if ((x-squareX)>0){
+            if ((y-squareY)<squareProportion){
+                if ((y-squareY)>0){
+                    return true;
+                }
+            }
         }
     }
     return false;
@@ -80,4 +84,28 @@ function getPlayerIndex(playerName,playerList){
         }
     }
     return false;
+}
+function getTrianglePos(dir){
+    if (dir==0){
+        return [[11/12,11/12],[23/24,11/12],[15/16,23/24]];
+    } else {
+        return [[15/16,11/12],[11/12,23/24],[23/24,23/24]];
+    }
+}
+function incrementTime(){
+    incTime++;
+    checkersboard.update();
+}
+function getMin(sec){
+    return [parseInt(sec/60),sec%60];
+}
+function representNum(num){
+    if (num>=10){
+        return num.toString();
+    } else {
+        return "0"+num.toString();
+    }
+}
+function getTimeString(timeArr){
+    return representNum(timeArr[0])+":"+representNum(timeArr[1]);
 }
